@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "type": "traffic_jam",
+    "location": "AVS Junction",
+    "lat": 10.8812,
+    "lng": 76.0908,
+    "description": "Heavy traffic congestion due to school pickup time. Multiple vehicles blocking the junction.",
+    "severity": "high",
+    "status": "active",
+    "reported_by": "Local Commuter",
+    "timestamp": "2024-07-26T08:30:00"
+  },
+  {
+    "id": 2,
+    "type": "pothole",
+    "location": "Temple Road",
+    "lat": 10.8805,
+    "lng": 76.0910,
+    "description": "Large pothole near the temple entrance causing vehicles to slow down significantly.",
+    "severity": "medium",
+    "status": "reported",
+    "reported_by": "Rickshaw Driver",
+    "timestamp": "2024-07-26T07:45:00"
+  },
+  {
+    "id": 3,
+    "type": "accident",
+    "location": "Market Zone",
+    "lat": 10.8820,
+    "lng": 76.0895,
+    "description": "Minor collision between two-wheeler and auto rickshaw. Traffic partially blocked.",
+    "severity": "high",
+    "status": "resolved",
+    "reported_by": "Emergency Services",
+    "timestamp": "2024-07-26T06:15:00"
+  },
+  {
+    "id": 4,
+    "type": "festival_crowd",
+    "location": "Temple Road",
+    "lat": 10.8805,
+    "lng": 76.0910,
+    "description": "Large gathering for morning pooja causing significant crowd on the road.",
+    "severity": "medium",
+    "status": "active",
+    "reported_by": "Local Resident",
+    "timestamp": "2024-07-26T06:00:00"
+  },
+  {
+    "id": 5,
+    "type": "road_block",
+    "location": "Changuvetty",
+    "lat": 10.8808,
+    "lng": 76.0905,
+    "description": "Construction work blocking one lane. Traffic moving slowly in single file.",
+    "severity": "medium",
+    "status": "active",
+    "reported_by": "Municipality Worker",
+    "timestamp": "2024-07-25T14:30:00"
+  },
+  {
+    "id": 6,
+    "type": "vehicle_breakdown",
+    "location": "Almas Hospital",
+    "lat": 10.8815,
+    "lng": 76.0902,
+    "description": "Bus breakdown near hospital entrance. Emergency vehicles may face delays.",
+    "severity": "high",
+    "status": "resolved",
+    "reported_by": "Hospital Staff",
+    "timestamp": "2024-07-25T11:20:00"
+  },
+  {
+    "id": 7,
+    "type": "traffic_jam",
+    "location": "Market Zone",
+    "lat": 10.8820,
+    "lng": 76.0895,
+    "description": "Weekend market rush causing heavy congestion. Multiple food stalls adding to the crowd.",
+    "severity": "medium",
+    "status": "active",
+    "reported_by": "Shop Owner",
+    "timestamp": "2024-07-25T09:45:00"
+  },
+  {
+    "id": 8,
+    "type": "flooding",
+    "location": "Kottakkal Center",
+    "lat": 10.8810,
+    "lng": 76.0900,
+    "description": "Water logging after heavy rain. Road partially flooded, vehicles moving slowly.",
+    "severity": "high",
+    "status": "resolved",
+    "reported_by": "Civil Defense",
+    "timestamp": "2024-07-24T16:00:00"
+  }
+]

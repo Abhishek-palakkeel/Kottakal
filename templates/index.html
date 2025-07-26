@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Live Traffic Map - Kottakkal Smart Traffic{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Map Container -->
+    <div id="map-container" class="position-relative">
+        <div id="map" style="height: 70vh;"></div>
+        
+        <!-- Floating Controls -->
+        <div class="map-controls position-absolute top-0 end-0 m-3">
+            <div class="btn-group-vertical" role="group">
+                <button type="button" class="btn btn-dark btn-sm" onclick="toggleTrafficView()">
+                    <i class="fas fa-eye"></i> Traffic View
+                </button>
+                <button type="button" class="btn btn-success btn-sm" onclick="startVoiceReport()">
+                    <i class="fas fa-microphone"></i> Voice Report
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" onclick="showQuickReport()">
+                    <i class="fas fa-plus"></i> Quick Report
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mode Toggle -->
+        <div class="mode-toggle position-absolute bottom-0 start-0 m-3">
+            <div class="btn-group" role="group">
+                <input type="radio" class="btn-check" name="viewMode" id="normalMode" autocomplete="off" checked>
+                <label class="btn btn-outline-light btn-sm" for="normalMode">
+                    <i class="fas fa-car"></i> Normal
+                </label>
+                
+                <input type="radio" class="btn-check" name="viewMode" id="emergencyMode" autocomplete="off">
+                <label class="btn btn-outline-danger btn-sm" for="emergencyMode">
+                    <i class="fas fa-ambulance"></i> Emergency
+                </label>
+                
+                <input type="radio" class="btn-check" name="viewMode" id="rickshawMode" autocomplete="off">
+                <label class="btn btn-outline-warning btn-sm" for="rickshawMode">
+                    <i class="fas fa-taxi"></i> Rickshaw
+                </label>
+                
+                <input type="radio" class="btn-check" name="viewMode" id="festivalMode" autocomplete="off">
+                <label class="btn btn-outline-info btn-sm" for="festivalMode">
+                    <i class="fas fa-calendar-alt"></i> Festival
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Route Planner Section -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-route me-2"></i>Smart Route Planner
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="routeForm" class="row g-3">
+                        <div class="col-md-5">
+                            <label for="startLocation" class="form-label">From</label>
+                            <select class="form-select" id="startLocation" name="start">
+                                <option value="">Select starting point</option>
+                                {% for key, location in locations.items() %}
+                                <option value="{{ key }}" data-lat="{{ location.lat }}" data-lng="{{ location.lng }}">
+                                    {{ location.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="endLocation" class="form-label">To</label>
+                            <select class="form-select" id="endLocation" name="end">
+                                <option value="">Select destination</option>
+                                {% for key, location in locations.items() %}
+                                <option value="{{ key }}" data-lat="{{ location.lat }}" data-lng="{{ location.lng }}">
+                                    {{ location.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Find Route
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Route Results -->
+                    <div id="routeResults" class="mt-3" style="display: none;">
+                        <div class="alert alert-info">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong id="routeDuration">-</strong> |
+                                    <span id="routeDistance">-</span> |
+                                    Traffic: <span id="routeTraffic" class="badge">-</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-info" onclick="showRouteAlternatives()">
+                                    Alternatives
+                                </button>
+                            </div>
+                            <div class="mt-2 small text-muted" id="routeNotes">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-clock me-2"></i>Junction Wait Times
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>AVS Junction</span>
+                            <span class="badge bg-warning">3-5 min</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Changuvetty</span>
+                            <span class="badge bg-success">1-2 min</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Market Zone</span>
+                            <span class="badge bg-danger">5-8 min</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span>Temple Road</span>
+                            <span class="badge bg-warning">2-4 min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Reports Section -->
+<div class="container mt-4 mb-5">
+    <div class="card">
+        <div class="card-header">
+            <h6 class="card-title mb-0">
+                <i class="fas fa-exclamation-circle me-2"></i>Recent Traffic Reports
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row" id="recentReports">
+                {% for report in reports %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card border-start border-{{ 'danger' if report.severity == 'high' else 'warning' if report.severity == 'medium' else 'info' }} border-3">
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="card-title mb-1">{{ report.type|title }}</h6>
+                                    <p class="card-text small text-muted">{{ report.location }}</p>
+                                </div>
+                                <span class="badge bg-{{ 'danger' if report.severity == 'high' else 'warning' if report.severity == 'medium' else 'info' }}">
+                                    {{ report.severity }}
+                                </span>
+                            </div>
+                            <p class="card-text small">{{ report.description[:60] }}...</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Report Modal -->
+<div class="modal fade" id="quickReportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Quick Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="quickReportForm">
+                    <div class="mb-3">
+                        <label for="quickReportType" class="form-label">Issue Type</label>
+                        <select class="form-select" id="quickReportType" required>
+                            <option value="">Select type</option>
+                            <option value="traffic_jam">Traffic Jam</option>
+                            <option value="accident">Accident</option>
+                            <option value="pothole">Pothole</option>
+                            <option value="road_block">Road Block</option>
+                            <option value="festival_crowd">Festival Crowd</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quickReportLocation" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="quickReportLocation" placeholder="Current location will be used" readonly>
+                        <input type="hidden" id="quickReportLat">
+                        <input type="hidden" id="quickReportLng">
+                    </div>
+                    <div class="mb-3">
+                        <label for="quickReportDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="quickReportDescription" rows="3" placeholder="Brief description of the issue"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitQuickReport()">Submit Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize map and functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeMap();
+    initializeRouteForm();
+    loadTrafficData();
+    
+    // Update traffic data every 30 seconds
+    setInterval(loadTrafficData, 30000);
+});
+
+// Traffic data from server
+const trafficData = {{ traffic_data|tojson }};
+const locations = {{ locations|tojson }};
+</script>
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Report Incident - Kottakkal Smart Traffic{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                        Report Traffic Incident
+                    </h4>
+                    <p class="mb-0 text-muted">Help improve traffic conditions by reporting issues in Kottakkal</p>
+                </div>
+                
+                <div class="card-body">
+                    <form method="POST" id="reportForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="incident_type" class="form-label">
+                                    <i class="fas fa-list me-1"></i>Incident Type *
+                                </label>
+                                <select class="form-select" id="incident_type" name="incident_type" required>
+                                    <option value="">Select incident type</option>
+                                    <option value="traffic_jam">🚗 Traffic Jam</option>
+                                    <option value="accident">🚨 Accident</option>
+                                    <option value="pothole">🕳️ Pothole</option>
+                                    <option value="road_block">🚧 Road Block</option>
+                                    <option value="festival_crowd">🎉 Festival Crowd</option>
+                                    <option value="vehicle_breakdown">⚠️ Vehicle Breakdown</option>
+                                    <option value="construction">🏗️ Construction Work</option>
+                                    <option value="flooding">🌊 Road Flooding</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="severity" class="form-label">
+                                    <i class="fas fa-thermometer-half me-1"></i>Severity Level
+                                </label>
+                                <select class="form-select" id="severity" name="severity">
+                                    <option value="low">🟢 Low - Minor delay</option>
+                                    <option value="medium" selected>🟡 Medium - Moderate delay</option>
+                                    <option value="high">🔴 High - Major blockage</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-1"></i>Location *
+                                </label>
+                                <select class="form-select" id="location" name="location" required>
+                                    <option value="">Select location</option>
+                                    {% for key, location in locations.items() %}
+                                    <option value="{{ location.name }}" data-lat="{{ location.lat }}" data-lng="{{ location.lng }}">
+                                        {{ location.name }}
+                                    </option>
+                                    {% endfor %}
+                                    <option value="other">📍 Other (specify in description)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="reporter_name" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Your Name (Optional)
+                                </label>
+                                <input type="text" class="form-control" id="reporter_name" name="reporter_name" placeholder="Anonymous reporter">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-comment me-1"></i>Detailed Description *
+                            </label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required
+                                      placeholder="Please provide details about the incident, its impact on traffic, and any other relevant information..."></textarea>
+                            <div class="form-text">
+                                Examples: "Large pothole causing vehicles to slow down", "Road blocked due to fallen tree", "Heavy crowd near temple affecting traffic flow"
+                            </div>
+                        </div>
+                        
+                        <!-- Location Coordinates (hidden fields) -->
+                        <input type="hidden" id="lat" name="lat" value="10.8810">
+                        <input type="hidden" id="lng" name="lng" value="76.0900">
+                        
+                        <!-- Voice Input Section -->
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-microphone me-2"></i>Voice Input (Optional)
+                                </h6>
+                                <p class="card-text small text-muted">
+                                    Click the button below to use voice input for your description. Supports Malayalam and English.
+                                </p>
+                                <div class="d-flex align-items-center gap-3">
+                                    <button type="button" class="btn btn-info" id="voiceBtn" onclick="toggleVoiceInput()">
+                                        <i class="fas fa-microphone"></i> Start Voice Input
+                                    </button>
+                                    <div id="voiceStatus" class="text-muted small"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Current Location -->
+                        <div class="card bg-info bg-opacity-10 mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-crosshairs me-2"></i>Current Location
+                                </h6>
+                                <div class="d-flex align-items-center gap-3">
+                                    <button type="button" class="btn btn-outline-info btn-sm" onclick="getCurrentLocation()">
+                                        <i class="fas fa-location-arrow"></i> Use Current Location
+                                    </button>
+                                    <div id="locationStatus" class="text-muted small">Click to detect your current location</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Tips Sidebar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>Reporting Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item px-0">
+                            <strong>🎯 Be Specific</strong>
+                            <p class="mb-0 small text-muted">Provide exact location and clear description of the issue</p>
+                        </div>
+                        
+                        <div class="list-group-item px-0">
+                            <strong>⚡ Report Quickly</strong>
+                            <p class="mb-0 small text-muted">Fresh reports help other commuters make better decisions</p>
+                        </div>
+                        
+                        <div class="list-group-item px-0">
+                            <strong>🚨 Emergency Cases</strong>
+                            <p class="mb-0 small text-muted">For emergencies, call 108 (Ambulance) or 100 (Police) immediately</p>
+                        </div>
+                        
+                        <div class="list-group-item px-0">
+                            <strong>📱 Use Voice Input</strong>
+                            <p class="mb-0 small text-muted">Voice input supports both Malayalam and English for convenience</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Emergency Contacts -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-phone me-2 text-danger"></i>Emergency Contacts
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item px-0 d-flex justify-content-between">
+                            <span><i class="fas fa-ambulance me-2 text-danger"></i>Ambulance</span>
+                            <a href="tel:108" class="btn btn-sm btn-outline-danger">108</a>
+                        </div>
+                        <div class="list-group-item px-0 d-flex justify-content-between">
+                            <span><i class="fas fa-shield-alt me-2 text-primary"></i>Police</span>
+                            <a href="tel:100" class="btn btn-sm btn-outline-primary">100</a>
+                        </div>
+                        <div class="list-group-item px-0 d-flex justify-content-between">
+                            <span><i class="fas fa-fire me-2 text-warning"></i>Fire Service</span>
+                            <a href="tel:101" class="btn btn-sm btn-outline-warning">101</a>
+                        </div>
+                        <div class="list-group-item px-0 d-flex justify-content-between">
+                            <span><i class="fas fa-building me-2 text-info"></i>Municipality</span>
+                            <a href="tel:0483-2744100" class="btn btn-sm btn-outline-info">Call</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let isListening = false;
+let recognition = null;
+
+// Initialize speech recognition if supported
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US'; // Default to English, can be changed to 'ml-IN' for Malayalam
+    
+    recognition.onstart = function() {
+        document.getElementById('voiceStatus').textContent = 'Listening... Speak now';
+        document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-stop"></i> Stop Listening';
+        document.getElementById('voiceBtn').classList.replace('btn-info', 'btn-danger');
+    };
+    
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        const descriptionField = document.getElementById('description');
+        
+        // Append to existing text or replace if empty
+        if (descriptionField.value.trim()) {
+            descriptionField.value += ' ' + transcript;
+        } else {
+            descriptionField.value = transcript;
+        }
+        
+        document.getElementById('voiceStatus').textContent = 'Voice input completed';
+    };
+    
+    recognition.onerror = function(event) {
+        document.getElementById('voiceStatus').textContent = 'Error: ' + event.error;
+        resetVoiceButton();
+    };
+    
+    recognition.onend = function() {
+        resetVoiceButton();
+    };
+}
+
+function toggleVoiceInput() {
+    if (!recognition) {
+        alert('Voice input is not supported in your browser');
+        return;
+    }
+    
+    if (isListening) {
+        recognition.stop();
+    } else {
+        recognition.start();
+        isListening = true;
+    }
+}
+
+function resetVoiceButton() {
+    isListening = false;
+    document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-microphone"></i> Start Voice Input';
+    document.getElementById('voiceBtn').classList.replace('btn-danger', 'btn-info');
+}
+
+function getCurrentLocation() {
+    if (!navigator.geolocation) {
+        alert('Geolocation is not supported by this browser');
+        return;
+    }
+    
+    document.getElementById('locationStatus').textContent = 'Getting location...';
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+            document.getElementById('locationStatus').textContent = `Location detected: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            
+            // Update location dropdown to "other" since we're using current location
+            document.getElementById('location').value = 'other';
+        },
+        function(error) {
+            document.getElementById('locationStatus').textContent = 'Error getting location: ' + error.message;
+        }
+    );
+}
+
+// Update coordinates when location is selected from dropdown
+document.getElementById('location').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    if (selectedOption.dataset.lat && selectedOption.dataset.lng) {
+        document.getElementById('lat').value = selectedOption.dataset.lat;
+        document.getElementById('lng').value = selectedOption.dataset.lng;
+    }
+});
+
+// Form validation
+document.getElementById('reportForm').addEventListener('submit', function(e) {
+    const incidentType = document.getElementById('incident_type').value;
+    const location = document.getElementById('location').value;
+    const description = document.getElementById('description').value.trim();
+    
+    if (!incidentType || !location || !description) {
+        e.preventDefault();
+        alert('Please fill in all required fields (marked with *)');
+    }
+});
+</script>
+{% endblock %}

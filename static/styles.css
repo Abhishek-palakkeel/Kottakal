@@ -1,0 +1,243 @@
+/* Custom styles for Kottakkal Traffic Management */
+
+/* Map specific styles */
+#map {
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.map-controls {
+    z-index: 1000;
+}
+
+.mode-toggle {
+    z-index: 1000;
+}
+
+/* Traffic level indicators */
+.traffic-marker {
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.traffic-green {
+    background-color: #28a745;
+}
+
+.traffic-yellow {
+    background-color: #ffc107;
+}
+
+.traffic-red {
+    background-color: #dc3545;
+}
+
+/* Custom badge styles for traffic levels */
+.badge.bg-traffic-low {
+    background-color: #28a745 !important;
+}
+
+.badge.bg-traffic-medium {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.badge.bg-traffic-high {
+    background-color: #dc3545 !important;
+}
+
+/* Route result styling */
+#routeResults .alert {
+    border-left: 4px solid var(--bs-info);
+}
+
+/* Voice input visualization */
+.voice-recording {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(13, 202, 240, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(13, 202, 240, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(13, 202, 240, 0);
+    }
+}
+
+/* Junction wait time styling */
+.list-group-item {
+    border-left: 3px solid transparent;
+}
+
+.list-group-item:has(.badge.bg-success) {
+    border-left-color: #28a745;
+}
+
+.list-group-item:has(.badge.bg-warning) {
+    border-left-color: #ffc107;
+}
+
+.list-group-item:has(.badge.bg-danger) {
+    border-left-color: #dc3545;
+}
+
+/* Report cards styling */
+.card.border-start {
+    border-left-width: 4px !important;
+}
+
+/* Emergency mode styling */
+.emergency-mode {
+    border: 2px solid #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.emergency-mode .card-header {
+    background-color: rgba(220, 53, 69, 0.2);
+}
+
+/* Festival mode styling */
+.festival-mode {
+    border: 2px solid #6f42c1;
+    background-color: rgba(111, 66, 193, 0.1);
+}
+
+.festival-mode .card-header {
+    background-color: rgba(111, 66, 193, 0.2);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .map-controls {
+        top: 10px !important;
+        right: 10px !important;
+    }
+    
+    .mode-toggle {
+        bottom: 10px !important;
+        left: 10px !important;
+    }
+    
+    .mode-toggle .btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    #map {
+        height: 50vh !important;
+    }
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0d6efd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Accessibility improvements */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .traffic-marker {
+        border-width: 3px;
+    }
+    
+    .badge {
+        border: 1px solid currentColor;
+    }
+}
+
+/* Print styles */
+@media print {
+    .map-controls,
+    .mode-toggle,
+    .navbar,
+    footer {
+        display: none !important;
+    }
+    
+    #map {
+        height: 400px !important;
+    }
+}
+
+/* Custom scrollbar for webkit browsers */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: var(--bs-gray-200);
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: var(--bs-gray-400);
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-gray-500);
+}
+
+/* Chart container responsive styling */
+canvas {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* Kerala-specific cultural elements */
+.kerala-accent {
+    border-left: 3px solid #ff6b35; /* Kerala traditional color */
+}
+
+.malayalam-text {
+    font-family: 'Noto Sans Malayalam', sans-serif;
+}
+
+/* Emergency services highlighting */
+.emergency-contact {
+    background: linear-gradient(45deg, rgba(220, 53, 69, 0.1), rgba(255, 193, 7, 0.1));
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 0.5rem 0;
+}
+
+/* Traffic level progress bars */
+.progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
